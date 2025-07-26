@@ -7,13 +7,13 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // use Render's PORT
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname, "../public")));
+// ✅ Correct path for Render & localhost
+app.use(express.static(path.resolve(__dirname, "public")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
 
 // Socket connection
@@ -26,17 +26,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat message", (data) => {
-    // Send the user's message to all
     io.emit("chat message", {
       user: data.user,
       message: data.message,
     });
 
-    // Basic bot logic
     const userMsg = data.message.toLowerCase();
     let botReply = "";
 
-    // Custom replies
     if (userMsg.includes("how are you") || userMsg.includes("how r u")) {
       botReply = "I'm fine, thank you!";
     } else if (userMsg.includes("hi") || userMsg.includes("hello")) {
@@ -44,11 +41,9 @@ io.on("connection", (socket) => {
     } else if (userMsg.includes("bye")) {
       botReply = "Goodbye! Have a nice day 😊";
     } else if (userMsg.includes("?") || userMsg.length > 1) {
-      // Generic response to any question or sentence
       botReply = "I’m just a simple bot, but I’m listening 😊";
     }
 
-    // Reply with delay
     if (botReply) {
       setTimeout(() => {
         io.emit("chat message", {
