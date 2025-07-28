@@ -1,4 +1,5 @@
-const socket = io();
+const socket = io("https://your-backend.onrender.com");
+
 let username = "";
 
 // Elements
