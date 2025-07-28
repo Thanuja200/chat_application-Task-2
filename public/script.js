@@ -1,4 +1,4 @@
-const socket = io("https://your-backend.onrender.com");
+const socket = io("https://chat-application-task-2-1.onrender.com");
 
 let username = "";
 
